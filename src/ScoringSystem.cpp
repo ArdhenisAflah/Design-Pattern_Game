@@ -2,16 +2,30 @@
 #include <map>
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 
-
-// Constructor: Inisialisasi Database saat game mulai
 ScoringSystem::ScoringSystem() {
     InitializeHandStats();
+    InitializeEffects();
 }
 
+
+ScoringSystem::~ScoringSystem() {
+   for (auto const& pair : effectMap) {
+        delete pair.second; // pair.second adalah kartu enhancement 'effect' (alias value dari map)
+    }
+    effectMap.clear();
+}
+
+void ScoringSystem::InitializeEffects() {
+    effectMap[CORRUPTED] = new CorruptedEffect();
+    effectMap[FIREWALL] = new FirewallEffect();
+    effectMap[OVERCLOCKED] = new OverclockedEffect();
+    effectMap[OPTIMIZED] = new OptimizedEffect();
+}
 void ScoringSystem::InitializeHandStats() {
-    // Format: {Level, BaseChips, BaseMult, UpgradeChips, UpgradeMult}
-    // Angka disesuaikan mirip Balatro (Planet Cards)
+    // Balancing untuk Survival Mode 
+    // {Level, BaseCode, BaseAmp, UpCode(kalau naik level), UpAmp(kalau naik leveel)}
     handDatabase[HIGH_CARD]       = {1, 5,  1,  10, 1};
     handDatabase[PAIR]            = {1, 10, 2,  15, 1};
     handDatabase[TWO_PAIR]        = {1, 20, 2,  20, 1};
@@ -23,147 +37,236 @@ void ScoringSystem::InitializeHandStats() {
     handDatabase[STRAIGHT_FLUSH]  = {1, 100, 8, 40, 4};
 }
 
-// Fungsi Upgrade Level
 void ScoringSystem::UpgradeHandLevel(HandType type) {
     if (handDatabase.count(type)) {
         handDatabase[type].level++;
-        // Feedback visual
-        std::cout << "   >>> " << GetHandName(type) << " Upgraded to Level " 
-                  << handDatabase[type].level << "!" << std::endl;
+        std::cout << "   >>> [UPGRADE] " << GetHandName(type) << " algorithm updated to v" 
+                  << handDatabase[type].level << ".0" << std::endl;
     }
 }
 
-
-// --- FUNGSI UTAMA YANG DIPANGGIL RUNSESSION ---
-int ScoringSystem::PlayHand(std::vector<Card> playedCards, HandType& outType) {
+int ScoringSystem::PlayHand(std::vector<Card> playedCards, HandType& outType, std::vector<Card>& brokenCardIndices) {
     if (playedCards.empty()) {
         outType = HIGH_CARD;
         return 0;
     }
 
-    // 1. Urutkan kartu dari kecil ke besar (Penting untuk Straight)
+    // 1. Sort kartu berdasarkan Rank -> (easier calculate for later...)
     std::sort(playedCards.begin(), playedCards.end(), [](const Card& a, const Card& b) {
         return a.rank < b.rank;
     });
 
-    // 2. Deteksi Tipe Tangan (Logic Cerdas di sini)
-    outType = DetermineHandType(playedCards);
+   // Kita butuh fungsi pendeteksi  yang mengembalikan kartu yang valid saja
+    std::vector<Card> scoringCards;
+    outType = DetermineScoringCards(playedCards, scoringCards); // this man right here do the jobs so high card only one card counted (highest)
 
-    // 3. Hitung Total Nilai Kartu (Chips dasar dari kartu)
+    // 3. Hitung Value Kartu (Base Code)
     int sum = 0;
-    for (const auto& c : playedCards) {
-        // Aturan Balatro: 2-9 sesuai angka, 10, J, Q, K bernilai 10. As bernilai 11.
-        int val = c.rank;
-        if (val >= 10 && val < 14) val = 10;
-        if (val == 14) val = 11;
+     //Deklarasi Variabel Penampung dari modifier dan enhancement
+    float bonusMult = 1.0f; 
+    int extraAmp = 0;
+
+    for (const auto& c : scoringCards) {
+        int val = c.rank; // Ambil nilai Enum (2-14)
+
+        // LOGIKA RANK (J,Q,K = 10, A = 11)
+        if (val >= JACK && val <= KING) {
+            val = 10;
+        }
+        if (val == ACE) {
+            val = 11;
+        }
+        bool isBroken = false; 
+       // Cek apakah kartu memiliki enhancement dan eksekusi strateginya
+        if (effectMap.count(c.enhancement)) {
+            // Memanggil strategi yang sesuai (Execute) secara dinamis
+            effectMap[c.enhancement]->Execute(val, bonusMult, extraAmp, isBroken);
+        }
+
+
+        // Pastikan kartu yang pecah dicatat di sini agar bisa dihapus oleh RunSession
+        if (isBroken) {
+            brokenCardIndices.push_back(c);
+            std::cout << "\033[31m" << "   [!] CRITICAL: " << c.ToString() 
+                      << " EXCEEDED LOAD! EXPLODING..." << "\033[0m" << std::endl;
+        }
         
         sum += val;
     }
 
-    // 4. Hitung Skor Akhir (Base Chips + Sum) * Mult
-    return CalculateScore(outType, sum);
+    // 4. Hitung Skor Dasar (Base Damage)
+    int finalDamage = CalculateScore(outType, sum);
+    
+
+    // Jika ada yang pecah, tambahkan "Explosion Damage" (Misal: 500 fixed damage per kartu)
+    if (!brokenCardIndices.empty()) {
+        int explosionDmg = brokenCardIndices.size() * 500;
+        finalDamage += explosionDmg;
+        std::cout << "   [BOOM] Data Leak Explosion: +" << explosionDmg << " DMG" << std::endl;
+    }
+
+
+    // [APLIKASI OVERCLOCKED] (+Amp)
+    // hitung manual tambahan damage-nya karena CalculateScore sudah jalan duluan
+    if (extraAmp > 0) {
+        // Ambil info stats tangan saat ini untuk tahu total base code-nya
+        HandStats stats = handDatabase[outType];
+        int currentBaseCode = stats.baseDmg + (stats.upgradeDmg * (stats.level - 1));
+        int totalCode = currentBaseCode + sum; // Total (Chips)
+        
+        int overclockBonus = totalCode * extraAmp; // Damage tambahan dari Overclock
+        finalDamage += overclockBonus;
+
+        std::cout << "   [MOD] OVERCLOCKED: +" << extraAmp << " Amp -> +" 
+                  << overclockBonus << " DMG" << std::endl;
+    }
+
+    // [APLIKASI CORRUPTED] (xMult)
+    if (bonusMult > 1.0f) {
+        int oldDmg = finalDamage;
+        finalDamage = (int)(finalDamage * bonusMult);
+        
+        std::cout << "   [AMP] CORRUPTED PROTOCOL: " << oldDmg 
+                  << " x " << std::fixed << std::setprecision(1) << bonusMult 
+                  << " = " << finalDamage << " DMG" << std::endl;
+    }
+
+    return finalDamage;
 }
 
-// --- LOGIKA DETEKSI TANGAN (STRATEGY PATTERN CORE) ---
+int ScoringSystem::CalculateScore(HandType handType, int sumOfCardValues) {
+    HandStats stats = handDatabase[handType];
+
+    // Rumus: Base + (LevelBonus * (Level - 1))
+    int currentBase = stats.baseDmg + (stats.upgradeDmg * (stats.level - 1));
+    int currentAmp  = stats.baseAmp + (stats.upgradeAmp * (stats.level - 1));
+
+    // Total Base = Base Hand + Nilai Kartu
+    int totalBase = currentBase + sumOfCardValues;
+    
+    // Final Calculation
+    int finalDamage = totalBase * currentAmp;
+
+    // Output Cyberpunk Style
+    std::cout << "   [CALC] " << GetHandName(handType) << " v" << stats.level 
+              << " :: " << totalBase << " (Code) x " << currentAmp << " (Amp) = " 
+              << finalDamage << " DMG";
+
+    return finalDamage;
+}
+
+// --- LOGIKA DETEKSI PLAYED HANDS ---
 HandType ScoringSystem::DetermineHandType(const std::vector<Card>& cards) {
     bool flush = IsFlush(cards);
     bool straight = IsStraight(cards);
 
-    // 1. Cek Straight Flush (Kasta Tertinggi)
     if (flush && straight) return STRAIGHT_FLUSH;
 
-    // 2. Analisis Frekuensi (Untuk Pair, Full House, 4-kind, dll)
     std::map<int, int> counts;
-    for (const auto& c : cards) {
-        counts[c.rank]++;
-    }
+    for (const auto& c : cards) counts[c.rank]++;
 
-    bool fourOfAKind = false;
-    bool threeOfAKind = false;
-    int pairCount = 0;
+    bool four = false, three = false;
+    int pairs = 0;
 
-    // --- BAGIAN INI SAYA UBAH AGAR KOMPATIBEL SAMA SEMUA COMPILER ---
-    // Mengganti Structured Binding [rank, count] dengan iterator biasa
     for (auto const& pair : counts) {
-        // int rank = pair.first; // Kita tidak butuh rank-nya di logic ini
-        int count = pair.second;  // Kita cuma butuh jumlahnya
-
-        if (count == 4) fourOfAKind = true;
-        if (count == 3) threeOfAKind = true;
-        if (count == 2) pairCount++;
+        if (pair.second == 4) four = true;
+        if (pair.second == 3) three = true;
+        if (pair.second == 2) pairs++;
     }
-    // -------------------------------------------------------------
 
-    // 3. Cek Hierarki dari atas ke bawah
-    if (fourOfAKind) return FOUR_OF_A_KIND;
-    if (threeOfAKind && pairCount >= 1) return FULL_HOUSE; // 3 + 2
+    if (four) return FOUR_OF_A_KIND;
+    if (three && pairs >= 1) return FULL_HOUSE;
     if (flush) return FLUSH;
     if (straight) return STRAIGHT;
-    if (threeOfAKind) return THREE_OF_A_KIND;
-    if (pairCount >= 2) return TWO_PAIR;
-    if (pairCount == 1) return PAIR;
-
-    // Kalau tidak ada pola apa-apa
+    if (three) return THREE_OF_A_KIND;
+    if (pairs >= 2) return TWO_PAIR;
+    if (pairs == 1) return PAIR;
     return HIGH_CARD;
 }
 
-// --- HELPER FUNCTIONS ---
-
 bool ScoringSystem::IsFlush(const std::vector<Card>& cards) {
-    // Flush minimal 5 kartu di Balatro (biasanya)
     if (cards.size() < 5) return false;
-
-    Suit firstSuit = cards[0].suit;
+    Suit first = cards[0].suit;
     for (size_t i = 1; i < cards.size(); i++) {
-        if (cards[i].suit != firstSuit) return false;
+        if (cards[i].suit != first) return false;
     }
     return true;
 }
 
 bool ScoringSystem::IsStraight(const std::vector<Card>& cards) {
-    // Straight minimal 5 kartu
     if (cards.size() < 5) return false;
-
-    // Cek urutan angka (Ingat, kartu sudah di-sort di awal fungsi PlayHand)
     for (size_t i = 0; i < cards.size() - 1; i++) {
-        // Kalau kartu selanjutnya TIDAK tepat +1 dari kartu sekarang, gagal straight
-        if (cards[i+1].rank != cards[i].rank + 1) {
-            return false;
-        }
+        if (cards[i+1].rank != cards[i].rank + 1) return false;
     }
     return true;
 }
 
-// --- KALKULASI SKOR ---
-int ScoringSystem::CalculateScore(HandType handType, int sumOfCardValues) {
-    //ambil data dari database
-    HandStats stats = handDatabase[handType];
-
-
-   // Rumus: Base + (LevelBonus * (Level - 1))
-    int currentChips = stats.baseChips + (stats.perLevelChips * (stats.level - 1));
-    int currentMult  = stats.baseMult  + (stats.perLevelMult  * (stats.level - 1));
-
-   // Total Chips = Chips Hand + Chips Kartu
-    int totalChips = currentChips + sumOfCardValues;
-
-    std::cout << "   (Lvl." << stats.level << " " << GetHandName(handType) 
-              << ": " << currentChips << "x" << currentMult << ") ";
-
-    return totalChips * currentMult;
-}
-
 std::string ScoringSystem::GetHandName(HandType type) {
     switch (type) {
-        case HIGH_CARD: return "High Card";
-        case PAIR: return "Pair";
-        case TWO_PAIR: return "Two Pair";
-        case THREE_OF_A_KIND: return "Three of a Kind";
-        case STRAIGHT: return "Straight";
-        case FLUSH: return "Flush";
-        case FULL_HOUSE: return "Full House";
-        case FOUR_OF_A_KIND: return "Four of a Kind";
-        case STRAIGHT_FLUSH: return "Straight Flush";
-        default: return "Unknown";
+        case HIGH_CARD:       return "Protocol: High Card";
+        case PAIR:            return "Protocol: Pair";
+        case TWO_PAIR:        return "Protocol: Two Pair";
+        case THREE_OF_A_KIND: return "Protocol: 3-Kind";
+        case STRAIGHT:        return "Protocol: Straight";
+        case FLUSH:           return "Protocol: Flush";
+        case FULL_HOUSE:      return "Protocol: Full House";
+        case FOUR_OF_A_KIND:  return "Protocol: 4-Kind";
+        case STRAIGHT_FLUSH:  return "Protocol: Str. Flush";
+        default: return "Unknown Protocol";
     }
+}
+
+HandType ScoringSystem::DetermineScoringCards(const std::vector<Card>& allCards, std::vector<Card>& scoringCards) {
+    bool flush = IsFlush(allCards);
+    bool straight = IsStraight(allCards);
+
+    // Jika Flush atau Straight, semua kartu (5 kartu) dihitung
+    if (flush || straight) {
+        scoringCards = allCards;
+        if (flush && straight) return STRAIGHT_FLUSH;
+        return flush ? FLUSH : STRAIGHT;
+    }
+
+    std::map<int, std::vector<Card>> groups;
+    for (const auto& c : allCards) groups[c.rank].push_back(c);
+
+    bool four = false, three = false;
+    std::vector<Card> pairs;
+    std::vector<Card> trips;
+    std::vector<Card> quads;
+
+    for (auto const& item : groups) {
+        if (item.second.size() == 4) quads = item.second;
+        else if (item.second.size() == 3) trips = item.second;
+        else if (item.second.size() == 2) {
+            pairs.insert(pairs.end(), item.second.begin(), item.second.end());
+        }
+    }
+
+    // Cek Hierarki dan masukkan hanya kartu yang relevan
+    if (!quads.empty()) {
+        scoringCards = quads; // Hanya 4 kartu yang sama yang dihitung
+        return FOUR_OF_A_KIND;
+    }
+    if (!trips.empty() && !pairs.empty()) {
+        scoringCards = trips;
+        scoringCards.insert(scoringCards.end(), pairs.begin(), pairs.end());
+        return FULL_HOUSE;
+    }
+    if (!trips.empty()) {
+        scoringCards = trips; // Hanya 3 kartu yang sama
+        return THREE_OF_A_KIND;
+    }
+    if (pairs.size() >= 4) { // Two Pair
+        scoringCards = pairs; 
+        return TWO_PAIR;
+    }
+    if (pairs.size() == 2) { // One Pair
+        scoringCards = pairs; // HANYA 2 KARTU INI YANG DIHITUNG
+        return PAIR;
+    }
+
+    // Jika High Card, hanya kartu tertinggi yang dihitung
+    scoringCards.push_back(allCards.back());
+    return HIGH_CARD;
 }

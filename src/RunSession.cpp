@@ -5,28 +5,24 @@
 #include <sstream>   
 #include <iomanip>   
 
-// Constructor
 RunSession::RunSession() {
-    this->money = 4; // Modal awal $4
+    // Modal Awal Besar Cuz its make easier for player (not too hard or easy i think)
+    this->money = 2000; 
+    
     this->currentAnte = 1;
     this->scoringSystem = new ScoringSystem();
     this->shopSystem = new ShopSystem();
     
-    std::srand(std::time(0)); // Seed random
+    std::srand(std::time(0)); 
     InitializeDeck();
 }
 
-// Destructor
 RunSession::~RunSession() {
-    delete scoringSystem;
-    delete shopSystem;
-    for (IModifier* mod : playerModifiers) {
-        delete mod;
-    }
+    delete scoringSystem; delete shopSystem;
+    for (IModifier* mod : playerModifiers) delete mod;
     playerModifiers.clear();
 }
 
-// Reset Deck jadi 52 kartu standar
 void RunSession::InitializeDeck() {
     deck.clear();
     for (int s = 0; s < 4; s++) {
@@ -36,204 +32,183 @@ void RunSession::InitializeDeck() {
     }
 }
 
-// Acak Deck
 void RunSession::ShuffleDeck() {
     std::random_shuffle(deck.begin(), deck.end());
 }
 
-// Main Loop Game (Antar Ante)
 void RunSession::StartGame() {
-    std::cout << "=== BALATRO C++ LITE EDITION ===" << std::endl;
-    // Isi toko pertama kali
+    std::cout << "========================================" << std::endl;
+    std::cout << "   CYBER SURVIVAL: DATA DEFENSE v1.0    " << std::endl;
+    std::cout << "========================================" << std::endl;
+    std::cout << "MISSION: Protect your Integrity ($) from Virus Threats." << std::endl;
+    std::cout << "WARNING: If Integrity reaches 0, System crashes.\n" << std::endl;
+    
+    // Buka toko awal untuk persiapan
     shopSystem->GenerateStock();
     
-    while (currentAnte <= MAX_ANTES) {
+    while (currentAnte <= MAX_ANTES && money > 0) {
         PlayBlind(); 
         currentAnte++;
     }
     
-    std::cout << "\n=== CONGRATULATIONS! YOU BEAT ANTE 8! ===" << std::endl;
+    if (money > 0)
+        std::cout << "\n=== [SYSTEM SECURED] ALL THREATS ELIMINATED! ===" << std::endl;
+    else 
+        std::cout << "\n=== [CRITICAL FAILURE] SYSTEM CRASHED. GAME OVER. ===" << std::endl;
 }
 
-// Logika Satu Ronde (Blind)
 void RunSession::PlayBlind() {
-    // 1. Setup Target Skor (Makin lama makin susah)
-    int targetScore = BASE_TARGET * currentAnte * 1.5; 
+    // 1. PROGRESSING SYSTEM: HP Virus makin tebal tiap Ante
+    long long virusHP = BASE_THREAT * currentAnte * 1.5; 
     
-    // 2. Reset Deck & Hand State
-    InitializeDeck();
+    //tidak membolehkan script fragmenter exe jalan soalnya reset 
+    std::vector<Card> drawPile = deck;
+    std::random_shuffle(drawPile.begin(), drawPile.end());
+
     ShuffleDeck();
 
-    int hands = 4;      // Nyawa (Kesempatan main)
-    int discards = 3;   // Discard (Belum ada logika buang kartu, tapi variabelnya ada)
-    int currentScore = 0; // Skor saat ini (Mulai dari 0)
-
-    // Cek Modifier untuk bonus kapasitas tangan
+    int hands = 4;      // Batas serangan player (Turns)
+    int discards = 3;   // Batas ganti kartu
+    
+    // Hitung kapasitas tangan + bonus joker
     int handSizeLimit = 8;
-    for (IModifier* mod : playerModifiers) {
-        handSizeLimit += mod->GetHandSizeBonus();
-    }
+    for (IModifier* mod : playerModifiers) handSizeLimit += mod->GetHandSizeBonus();
 
     std::vector<Card> hand;
-
-    // Helper Lambda untuk refill kartu sampai penuh
     auto DrawCards = [&]() {
-        while (hand.size() < handSizeLimit && !deck.empty()) {
-            hand.push_back(deck.back());
-            deck.pop_back();
+        while (hand.size() < handSizeLimit && !drawPile.empty()) {
+            hand.push_back(drawPile.back()); drawPile.pop_back();
         }
     };
-
-    // Draw kartu awal
     DrawCards(); 
 
-    // === GAME LOOP DALAM SATU BLIND ===
-    // Main terus selama nyawa masih ada DAN target belum tercapai
-    while (hands > 0 && currentScore < targetScore) {
+    // === BATTLE LOOP ===
+    while (hands > 0 && virusHP > 0) {
         
-        // --- UI HEADER ---
-        std::cout << "\n========================================" << std::endl;
-        std::cout << "ANTE " << currentAnte << " | SCORE: " << currentScore << " / " << targetScore << std::endl;
-        std::cout << "Hands: " << hands << " | Discards: " << discards << " | Money: $" << money << std::endl;
-        std::cout << "Jokers: ";
+        std::cout << "\n----------------------------------------" << std::endl;
+        std::cout << "WAVE " << currentAnte << " | VIRUS THREAT: " << virusHP << std::endl;
+        std::cout << "INTEGRITY ($): " << money << " | Attacks: " << hands << " | Rerolls: " << discards << std::endl;
+        
+        std::cout << "Active Scripts: ";
         if(playerModifiers.empty()) std::cout << "(None)";
         for(auto* m : playerModifiers) std::cout << "[" << m->GetName() << "] ";
         std::cout << "\n----------------------------------------" << std::endl;
 
-        // Tampilkan Tangan
-        std::cout << "YOUR HAND:" << std::endl;
+        std::cout << "DATA BUFFER (HAND):" << std::endl;
         for (size_t i = 0; i < hand.size(); i++) {
             std::cout << "[" << i << ":" << hand[i].ToString() << "] ";
         }
         std::cout << std::endl;
 
-        // --- INPUT USER ---
+        // Input Logic
         std::vector<Card> selectedCards;
         std::vector<int> selectedIndices;
-
-        // Discard Flag
-        bool isDiscardAction = false; 
+        bool isDiscard = false;
         
         while (true) {
-            std::cout << "\nAction: Type indices to Play (e.g. '0 1 2')." << std::endl;
-            std::cout << ">> ";
-            
-            selectedCards.clear();
-            selectedIndices.clear();
-            
+            std::cout << "\nCmd (idx OR 'd' idx): ";
             std::string line;
-            // PENTING: Pakai getline biar input ga loncat-loncat
-            if (!std::getline(std::cin, line) || line.empty()) continue; 
+            if (!std::getline(std::cin, line) || line.empty()) continue;
 
-
-            // [BARU] Logika deteksi Discard
-            isDiscardAction = false; // Reset flag
-            if (line[0] == 'd' || line[0] == 'D') {
-                if (discards <= 0) {
-                    std::cout << "[!] No discards remaining!" << std::endl;
-                    continue;
-                }
-                isDiscardAction = true;
-                line = line.substr(1); // Potong huruf 'd' agar sisa angkanya saja
-            }
+            isDiscard = (line[0] == 'd' || line[0] == 'D');
+            if (isDiscard) line = line.substr(1);
 
             std::stringstream ss(line);
             int idx;
             bool valid = true;
+            selectedIndices.clear(); selectedCards.clear();
             
-            // Parsing angka input
             while (ss >> idx) {
                 if (idx >= 0 && idx < hand.size()) {
-                    // Cek duplikat input (biar ga mainin kartu yg sama 2x)
-                    bool duplicate = false;
-                    for(int existing : selectedIndices) if(existing == idx) duplicate = true;
+                    bool dup = false;
+                    for(int x : selectedIndices) if(x==idx) dup=true;
                     
-                    if(!duplicate) {
-                        selectedIndices.push_back(idx);
-                        selectedCards.push_back(hand[idx]);
+                    if(dup) { 
+                        // JIKA DUP: Tandai sebagai input tidak valid
+                        valid = false; 
+                    } else { 
+                        selectedIndices.push_back(idx); 
+                        selectedCards.push_back(hand[idx]); 
                     }
                 } else {
                     valid = false;
                 }
             }
 
-            // Validasi final
-            if (valid && !selectedCards.empty() && selectedCards.size() <= 5) {
-                break; // Input valid, keluar loop input
-            }
-            std::cout << "[!] Invalid selection. Pick 1-5 unique valid card indices." << std::endl;
+            if (isDiscard && discards <= 0) { std::cout << "No rerolls left!" << std::endl; continue; }
+            if (valid && !selectedCards.empty() && selectedCards.size() <= 5) break;
+            std::cout << "Invalid input." << std::endl;
         }
 
-        // --- PROSES SKORING ---
+        if (isDiscard) {
+            discards--;
+            std::cout << ">> Flushing bad data (Discarding)..." << std::endl;
+        } else {
+            // PLAY HAND FOR ATTACK VIRUS
+            hands--; 
+            HandType type;
+            std::vector<Card> brokenCards; // Penampung kartu yang meledak (discard after dis )
 
-        if (isDiscardAction) {
-            // === JALUR 1: DISCARD ===
-            discards--; 
-            std::cout << "\n>> Discarding selected cards..." << std::endl;
-            
-            // Hapus kartu (Remove)
-            std::sort(selectedIndices.rbegin(), selectedIndices.rend());
-            for (int idx : selectedIndices) {
-                hand.erase(hand.begin() + idx);
+            int damage = scoringSystem->PlayHand(selectedCards, type, brokenCards);
+            // 1. Hapus kartu yang pecah dari DECK PERMANEN!!!!!!!!!!!!
+            if (!brokenCards.empty()) {
+                for (const auto& brokenCard : brokenCards) {
+                    // Cari kartu yang sama di dalam deck dan hapus
+                    for (auto it = deck.begin(); it != deck.end(); ++it) {
+                        if (it->rank == brokenCard.rank && it->suit == brokenCard.suit) {
+                            deck.erase(it);
+                            break; 
+                        }
+                    }
+                }
             }
-            
-            // Refill (Reroll) kartu baru
-            DrawCards();
-            
-            continue; // Skip ke loop berikutnya (jangan hitung skor!)
-        } 
-        // === JALUR 2: PLAY HAND (Code lama masuk ke sini) ===
-        hands--; // Kurangi nyawa
-        
-        HandType type;
-        // Hitung Base Score (Strategy Pattern)
-        int handScore = scoringSystem->PlayHand(selectedCards, type);
-        
-        std::cout << "\n   > Hand: " << scoringSystem->GetHandName(type);
-        std::cout << " | Base: " << handScore;
+            std::cout << "\n   > Executing: " << scoringSystem->GetHandName(type) << " | Base Dmg: " << damage;
 
-        // Hitung Modifier Effect (Decorator Pattern)
-        for (IModifier* mod : playerModifiers) {
-            int old = handScore;
-            mod->Apply(handScore);
-            if(handScore != old) std::cout << " -> [Joker: " << handScore << "]"; 
+            // Apply Modifiers (Buff Attack)
+            for (IModifier* mod : playerModifiers) {
+                int old = damage;
+                mod->Apply(damage);
+                if(damage != old) std::cout << " -> [Buff: " << damage << "]"; 
+            }
+            std::cout << std::endl;
+
+            // Kurangi HP Virus
+            virusHP -= damage;
+            if (virusHP < 0) virusHP = 0;
+            
+            std::cout << "   > Virus Threat Reduced! Remaining: " << virusHP << std::endl;
         }
-        std::cout << std::endl;
 
-        // AKUMULASI SKOR (PENTING!)
-        currentScore += handScore;
-        std::cout << "   > Total Blind Score: " << currentScore << " (Target: " << targetScore << ")" << std::endl;
-
-        // --- CLEANUP TANGAN ---
-        // Hapus kartu yang dimainkan. 
-        // Sort index dari besar ke kecil supaya saat dihapus, index sisanya tidak geser.
+        // Cleanup & Redraw
         std::sort(selectedIndices.rbegin(), selectedIndices.rend());
-        for (int idx : selectedIndices) {
-            hand.erase(hand.begin() + idx);
-        }
-
-        // Refill tangan dengan kartu baru
+        for (int idx : selectedIndices) hand.erase(hand.begin() + idx);
         DrawCards();
     }
 
-    // === AKHIR BLIND (CEK MENANG/KALAH) ===
-    if (currentScore >= targetScore) {
-        int reward = 5 * currentAnte; // Duit hadiah dasar
-        reward += (hands * 1); // Bonus sisa hands ($1 per hand)
-        
+    // === LOGIC TIAP AKHIR WAVE ===
+    if (virusHP <= 0) {
+        // MENANG: Dapat bonus Integrity (Healing)
+        int reward = 100 + (hands * 50); 
         money += reward;
-        std::cout << "\n########################################" << std::endl;
-        std::cout << "BLIND CLEARED! Reward: $" << reward << std::endl;
-        std::cout << "########################################" << std::endl;
+        std::cout << "\n[SUCCESS] VIRUS DELETED! Integrity Restored +$" << reward << std::endl;
         
-        // Buka Toko
+        // Buka Toko untuk persiapan Wave berikutnya
         shopSystem->OpenShop(money, playerModifiers, deck, scoringSystem);
     } else {
-        std::cout << "\n========================================" << std::endl;
-        std::cout << "GAME OVER" << std::endl;
-        std::cout << "Final Score: " << currentScore << " / " << targetScore << std::endl;
-        std::cout << "Reached Ante: " << currentAnte << std::endl;
-        std::cout << "========================================" << std::endl;
-        exit(0); // Keluar program total
+        // KALAH WAVE: Virus menyerang balik! (Kurangi Uang if any)
+        std::cout << "\n[WARNING] DEFENSE FAILED! Virus attacks System!" << std::endl;
+        std::cout << "Integrity Damage Taken: -" << virusHP << std::endl;
+        
+        money -= virusHP;
+        
+        if (money <= 0) {
+            std::cout << "Integrity Critical... SYSTEM SHUTDOWN." << std::endl;
+            exit(0);
+        } else {
+            std::cout << "System unstable. Remaining Integrity: $" << money << std::endl;
+            std::cout << "Emergency Shop Protocol Initiated..." << std::endl;
+            // Masih hidup tapi sekarat, buka toko siapa tau bisa beli bantuan wok :) 
+            shopSystem->OpenShop(money, playerModifiers, deck, scoringSystem);
+        }
     }
 }

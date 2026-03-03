@@ -3,6 +3,7 @@
 #include "HackerFactory.h"
 #include <iostream>
 #include <cstdlib>
+#include <iomanip>
 
 ShopSystem::~ShopSystem() {
     ClearStocks();
@@ -17,18 +18,28 @@ void ShopSystem::ClearStocks() {
 }
 
 void ShopSystem::GenerateStock() {
-    ClearStocks(); // Bersihkan yang lama dulu
+    ClearStocks(); 
+    std::cout << "\n[!] CONNECTING TO DARK WEB VENDOR..." << std::endl;
+    std::cout << "[!] NEW STOCK GENERATED." << std::endl;
 
-    std::cout << "\n[!] Shop Restocked (Jokers & Hacker Cards)..." << std::endl;
-
-    // Generate 2 barang acak (Bisa diatur peluangnya di sini)
+    // 1. Generate 3 Script (Joker)
     for (int i = 0; i < 2; i++) {
         int rng = rand() % 100; 
-        if (rng < 70) jokerStock.push_back(ModifierFactory::CreateModifier("flat"));
-        else jokerStock.push_back(ModifierFactory::CreateModifier("double"));
+        // 50% Peluang Firewall (Flat Bonus)
+        if (rng < 50) {
+            jokerStock.push_back(ModifierFactory::CreateModifier("flat"));
+        }
+        // 30% Peluang RAM Upgrade (Memory)
+        else if (rng < 80) {
+            jokerStock.push_back(ModifierFactory::CreateModifier("memory"));
+        }
+        // 20% Peluang Overclock (Double Score)
+        else {
+            jokerStock.push_back(ModifierFactory::CreateModifier("double"));
+        }
     }
 
-    // 2. Generate 2 Hacker Card Acak
+    // 2. Generate 2 Hacker Protocols
     for (int i = 0; i < 2; i++) {
         hackerStock.push_back(HackerFactory::CreateRandomHackerCard());
     }
@@ -36,37 +47,52 @@ void ShopSystem::GenerateStock() {
 
 void ShopSystem::OpenShop(int& money, std::vector<IModifier*>& inventory, 
                           std::vector<Card>& deck, ScoringSystem* scoringSystem) {
-  
     
     bool shopping = true;
     while (shopping) {
-        std::cout << "\n=== SHOP (Gold: " << money << ") ===" << std::endl;
+        std::cout << "\n========================================" << std::endl;
+        std::cout << "   DARK WEB VENDOR (INTEGRITY: " << money << ")   " << std::endl;
+        std::cout << "========================================" << std::endl;
+        std::cout << "WARNING: Spending Integrity reduces your current defense!" << std::endl;
         
-       // --- DISPLAY JOKERS (Pilihan 1-2) ---
-        std::cout << "--- JOKERS (Passive) ---" << std::endl;
-        if (jokerStock.empty()) std::cout << "   (Out of stock)" << std::endl;
+        // --- DISPLAY SCRIPTS (Jokers) ---
+        std::cout << "\n--- DEFENSE SCRIPTS (Passive Buffs) ---" << std::endl;
+        if (jokerStock.empty()) std::cout << "   [SOLD OUT]" << std::endl;
+        
         for (int i = 0; i < jokerStock.size(); i++) {
-            std::cout << (i + 1) << ". Buy " << jokerStock[i]->GetName() 
-                      << " ($" << jokerStock[i]->GetCost() << ")" << std::endl;
+            std::cout << " " << (i + 1) << ". INSTALL " << jokerStock[i]->GetName() 
+                      << " (Cost: " << jokerStock[i]->GetCost() << " Integrity)" << std::endl;
         }
 
-        // --- DISPLAY HACKER CARDS (Pilihan 3-4) ---
-        std::cout << "--- HACKER CARDS (Consumable) ---" << std::endl;
-        if (hackerStock.empty()) std::cout << "   (Out of stock)" << std::endl;
+        // --- DISPLAY HACKER PROTOCOLS ---
+        std::cout << "\n--- HACKER PROTOCOLS (One-Time Use) ---" << std::endl;
+        if (hackerStock.empty()) std::cout << "   [SOLD OUT]" << std::endl;
+        
         for (int i = 0; i < hackerStock.size(); i++) {
-            // Offset index biar lanjut dari joker (misal Joker ada 2, berarti ini nomor 3)
             int displayNum = i + 1 + jokerStock.size(); 
-            std::cout << displayNum << ". Buy " << hackerStock[i]->GetName() 
-                      << " ($" << hackerStock[i]->GetCost() << ")" << std::endl;
+            std::cout << " " << displayNum << ". EXECUTE " << hackerStock[i]->GetName() 
+                      << " (Cost: " << hackerStock[i]->GetCost() << " Integrity)" << std::endl;
         }
 
-        std::cout << "R. Reroll ($" << REROLL_COST << ")\nE. Exit\nChoice: ";
+        std::cout << "\n----------------------------------------" << std::endl;
+        std::cout << "R. Refresh Stock (Cost: " << REROLL_COST << ")" << std::endl;
+        std::cout << "E. Disconnect & Next Wave" << std::endl;
+        std::cout << "Choice >> ";
 
-        char choice;
-        std::cin >> choice;
+
+        //Reminder: keslahan besar enih pake cin gua
+        // char choice;
+        // std::cin >> choice;
+        
+        //Getline for select shop item.
+        std::string input;
+        if (!std::getline(std::cin, input) || input.empty()) continue; 
+        
+        char choice = input[0]; // Ambil karakter pertama
+        
 
         if (isdigit(choice)) {
-            int selection = (choice - '0'); // Konversi char ke int (1-based)
+            int selection = (choice - '0'); 
             int jokerCount = jokerStock.size();
             int hackerCount = hackerStock.size();
 
@@ -74,45 +100,50 @@ void ShopSystem::OpenShop(int& money, std::vector<IModifier*>& inventory,
             if (selection >= 1 && selection <= jokerCount) {
                 int idx = selection - 1;
                 IModifier* item = jokerStock[idx];
-                if (money >= item->GetCost()) {
+
+                //Limit Deck maks 4
+                if (inventory.size() >= 4) {
+                    std::cout << "\n[ERROR] System Memory Full! You can only install up to 4 Active Scripts." << std::endl;
+                }
+                else if (money > item->GetCost()) { // Harus sisa minimal 1 nyawa
                     money -= item->GetCost();
                     inventory.push_back(item);
-                    
-                    // Hapus dari rak (tanpa delete memory objectnya)
                     jokerStock.erase(jokerStock.begin() + idx); 
-                    std::cout << ">> Purchased Joker: " << item->GetName() << "!" << std::endl;
-                } else std::cout << ">> Not enough gold!" << std::endl;
+                    
+                    std::cout << "\n[SUCCESS] Script Installed: " << item->GetName() << std::endl;
+                } else {
+                    std::cout << "\n[ERROR] Insufficient Integrity! Cannot risk system failure." << std::endl;
+                }
             }
             // LOGIKA BELI HACKER CARD
             else if (selection > jokerCount && selection <= (jokerCount + hackerCount)) {
-                int idx = selection - 1 - jokerCount; // Index relatif terhadap vector hackerStock
+                int idx = selection - 1 - jokerCount;
                 IHackerCard* item = hackerStock[idx];
                 
-                if (money >= item->GetCost()) {
+                if (money > item->GetCost()) {
                     money -= item->GetCost();
                     
-                    // LANGSUNG PAKAI (TRIGGER)
-                    // Di Balatro asli disimpan dulu, tapi biar simpel kita langsung pakai saat beli
-                    item->Trigger(deck, scoringSystem);
+                    // Langsung eksekusi efeknya, (player bought)
+                    item->Trigger(deck, scoringSystem, money);
                     
-                    // Hapus Memory (karena Consumable sekali pakai)
                     delete item; 
                     hackerStock.erase(hackerStock.begin() + idx);
-                } else std::cout << ">> Not enough gold!" << std::endl;
+                } else {
+                    std::cout << "\n[ERROR] Insufficient Integrity!" << std::endl;
+                }
             }
         }
-        // Logika Reroll
         else if (choice == 'r' || choice == 'R') {
-            if (money >= REROLL_COST) {
+            if (money > REROLL_COST) {
                 money -= REROLL_COST;
-                GenerateStock(); // Panggil Factory lagi!
+                GenerateStock(); 
             } else {
-                std::cout << ">> Not enough gold to reroll!" << std::endl;
+                std::cout << "\n[ERROR] Not enough Integrity to refresh connection!" << std::endl;
             }
         }
-        // Logika Exit
         else if (choice == 'e' || choice == 'E') {
             shopping = false;
+            std::cout << "\n[LOG] Disconnecting from Dark Web..." << std::endl;
         }
     }
 }

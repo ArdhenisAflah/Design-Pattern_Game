@@ -11,10 +11,10 @@ class RunSession {
 private:
     int money;
     
-    // Variabel Baru (Ante System)
+    // Variabel (WAVE System)
     int currentAnte;        
-    const int MAX_ANTES = 8; 
-    const int BASE_TARGET = 100; 
+    const int MAX_WAVES = 8; 
+    const int BASE_THREAT = 300; // HP awal Virus (Musuh)
 
     ScoringSystem* scoringSystem;
     ShopSystem* shopSystem;
@@ -26,7 +26,7 @@ private:
     void InitializeDeck();
     void ShuffleDeck();
     
-    // Fungsi Baru (Gantikan PlayRound)
+    
     void PlayBlind(); 
 
 public:
