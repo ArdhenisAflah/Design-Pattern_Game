@@ -1,16 +1,21 @@
 #include "ModifierFactory.h"
-#include "modifiers/FlatBonusModifier.h" // Isinya FlatBonusModifier
-#include "modifiers/DoubleScoreModifier.h" // Isinya DoubleScoreModifier
+#include "modifiers/FlatBonusModifier.h" 
+#include "modifiers/DoubleScoreModifier.h"
+#include "modifiers/MemoryExpansionModifier.h"
 #include <iostream>
 
 IModifier* ModifierFactory::CreateModifier(std::string type) {
     if (type == "flat") {
-        // Ini dari file ModifierA
-        return new FlatBonusModifier(100); 
+        // 300 biar lebih kuat buat Survival
+        return new FlatBonusModifier(300); 
     } 
     else if (type == "double") {
-        // Ini dari file ModifierB, tapi nama classnya DoubleScoreModifier
+        // Logika Menggandakan Score
         return new DoubleScoreModifier(); 
+    }
+    else if (type == "memory") {
+        // Logika untuk membuat Memory Expansion
+        return new MemoryExpansionModifier();
     }
     
     return nullptr;
