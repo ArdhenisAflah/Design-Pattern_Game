@@ -6,7 +6,7 @@ LevelPatch::LevelPatch(HandType hand, std::string name) {
     this->handName = name;
 }
 
-void LevelPatch::Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem) {
+void LevelPatch::Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem, int& integrity) {
     std::cout << "\n[>] SYSTEM UPDATE INITIATED..." << std::endl;
     
     // Naikkan Level

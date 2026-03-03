@@ -16,7 +16,7 @@ public:
     std::string GetDescription() override { return "Level up " + handName; }
     int GetCost() override { return 5; }
 
-    void Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem) override;
+    void Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem, int& integrity) override;
 };
 
 #endif

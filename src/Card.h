@@ -15,7 +15,7 @@
 
 enum Suit { HEARTS, DIAMONDS, CLUBS, SPADES };
 
-// [BARU] Enum Rank biar tidak bingung angka 11, 12, 13, 14
+//  Enum Rank biar tidak bingung angka 11, 12, 13, 14
 enum Rank {
     TWO = 2, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN,
     JACK = 11,
@@ -24,15 +24,14 @@ enum Rank {
     ACE = 14
 };
 
-// [REBRANDING] Ganti istilah Balatro jadi Cyberpunk
+// Enhancement List
 enum CardEnhancement {
     NONE,
-    CORRUPTED,  // (Ex-Glass) X2 Amp, berisiko pecah/hilang
-    ENCRYPTED,  // (Ex-Steel) X1.5 Amp saat di tangan (Held)
-    FIREWALL,   // (Ex-Stone) +50 Base, Rank/Suit diabaikan
-    MINING,     // (Ex-Gold)  +$3 Integrity di akhir round
-    OVERCLOCKED,// (Ex-Mult)  +4 Amp
-    OPTIMIZED   // (Ex-Bonus) +30 Base Code
+    CORRUPTED,  //  X2 Amp, berisiko pecah/hilang
+    FIREWALL,   //  +50 Base, Rank/Suit diabaikan
+    MINING,     //  +$3 Integrity di akhir round
+    OVERCLOCKED,//  +4 Amp
+    OPTIMIZED   //  +30 Base Code
 };
 
 struct Card {
@@ -58,10 +57,6 @@ struct Card {
             case CORRUPTED:   
                 effectColor = CYAN; 
                 prefix = "[CRP]"; 
-                break;
-            case ENCRYPTED:   
-                effectColor = BLUE; // Atau warna lain 
-                prefix = "[ENC]"; 
                 break;
             case FIREWALL:    
                 effectColor = GRAY; 
@@ -98,7 +93,7 @@ struct Card {
             case SPADES:   sStr = "S"; break;
         }
         
-        // LOGIKA GABUNGAN:
+    
         // Jika ada enhancement, warnai Prefix-nya saja dengan effectColor.
         // Sisanya (Rank-Suit) tetap pakai suitColor.
         

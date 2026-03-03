@@ -19,7 +19,7 @@ public:
     // FUNGSI UTAMA: Memicu efek kartu
     // targetDeck: Referensi ke deck pemain (untuk diacak-acak)
     // scoringSystem: Referensi ke sistem skor (untuk upgrade level)
-    virtual void Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem) = 0;
+    virtual void Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem, int& integrity) = 0;
 };
 
 #endif

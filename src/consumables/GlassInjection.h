@@ -9,7 +9,7 @@ public:
     std::string GetDescription() override { return "Overclock 2 packets (2x Dmg, chance to break)"; }
     int GetCost() override { return 4; } 
 
-    void Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem) override;
+    void Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem, int& integrity) override;
 };
 
 #endif

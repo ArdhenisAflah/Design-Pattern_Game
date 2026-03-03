@@ -2,7 +2,7 @@
 #include <cstdlib> 
 #include <iostream>
 
-void GlassInjection::Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem) {
+void GlassInjection::Trigger(std::vector<Card>& targetDeck, ScoringSystem* scoringSystem, int& integrity) {
     if (targetDeck.empty()) return;
 
     std::cout << "\n[>] RUNNING: FRAGMENTER.EXE..." << std::endl;
