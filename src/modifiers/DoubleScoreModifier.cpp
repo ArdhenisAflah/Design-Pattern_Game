@@ -1,14 +1,15 @@
 #include "DoubleScoreModifier.h"
 
 void DoubleScoreModifier::Apply(int& score) {
-    // Logika: Kali 2 skor saat ini
-    score *= 2; 
+    // Kali 2 Damage Affect score 
+    score = (int)(score * 2.4f);
 }
 
 std::string DoubleScoreModifier::GetName() {
-    return "Double Score (x2)";
+    // Nama baru, sesuaikan tema, sama efeknya ditingkatkan sedikit.
+    return "Overclock Daemon (x2.4 Dmg)";
 }
 
 int DoubleScoreModifier::GetCost() {
-    return 150; // Contoh harga lebih mahal karena efeknya kuat
+    return 400; // Mahal tapi wajib punya untuk late game
 }
