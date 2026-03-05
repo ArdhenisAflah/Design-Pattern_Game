@@ -1,0 +1,392 @@
+**NOTE** : CARA RUNNING PROJECT :
+1. Compile dengan g++ src/*.cpp src/modifiers/*.cpp src/consumables/*.cpp -o balatro_game (Saya menggunakan C++ 11)
+2. Run dengan balatro_game
+
+========================================
+   CYBER SURVIVAL: DATA DEFENSE v1.0    
+========================================
+MISSION: Protect your Integrity ($) from Virus Threats.
+WARNING: If Integrity reaches 0, System crashes.
+
+
+[!] CONNECTING TO DARK WEB VENDOR...
+[!] NEW STOCK GENERATED.
+
+----------------------------------------
+WAVE 1 | VIRUS THREAT: 450
+INTEGRITY ($): 2000 | Attacks: 4 | Rerolls: 3
+Active Scripts: (None)
+----------------------------------------
+DATA BUFFER (HAND):
+[0:6-C] [1:K-S] [2:10-C] [3:6-H] [4:K-D] [5:2-H] [6:A-H] [7:Q-D] 
+
+Cmd (idx OR 'd' idx): 0 3 1 4
+   [CALC] Protocol: Two Pair v1 :: 52 (Code) x 2 (Amp) = 104 DMG
+   > Executing: Protocol: Two Pair | Base Dmg: 104
+   > Virus Threat Reduced! Remaining: 346
+
+----------------------------------------
+WAVE 1 | VIRUS THREAT: 346
+INTEGRITY ($): 2000 | Attacks: 3 | Rerolls: 3
+Active Scripts: (None)
+----------------------------------------
+DATA BUFFER (HAND):
+[0:10-C] [1:2-H] [2:A-H] [3:Q-D] [4:Q-C] [5:3-H] [6:9-D] [7:7-C] 
+
+Cmd (idx OR 'd' idx): 1 2 3 3 4
+Invalid input.
+
+Cmd (idx OR 'd' idx): 1 2 5 3 4
+   [CALC] Protocol: Pair v1 :: 30 (Code) x 2 (Amp) = 60 DMG
+   > Executing: Protocol: Pair | Base Dmg: 60
+   > Virus Threat Reduced! Remaining: 286
+
+----------------------------------------
+WAVE 1 | VIRUS THREAT: 286
+INTEGRITY ($): 2000 | Attacks: 2 | Rerolls: 3
+Active Scripts: (None)
+----------------------------------------
+DATA BUFFER (HAND):
+[0:10-C] [1:9-D] [2:7-C] [3:Q-S] [4:7-S] [5:8-H] [6:7-D] [7:5-S]
+
+Cmd (idx OR 'd' idx): 2 4 6
+   [CALC] Protocol: 3-Kind v1 :: 51 (Code) x 3 (Amp) = 153 DMG
+   > Executing: Protocol: 3-Kind | Base Dmg: 153
+   > Virus Threat Reduced! Remaining: 133
+
+----------------------------------------
+WAVE 1 | VIRUS THREAT: 133
+INTEGRITY ($): 2000 | Attacks: 1 | Rerolls: 3
+Active Scripts: (None)
+----------------------------------------
+DATA BUFFER (HAND):
+[0:10-C] [1:9-D] [2:Q-S] [3:8-H] [4:5-S] [5:3-C] [6:10-S] [7:4-H]
+
+Cmd (idx OR 'd' idx): 0 1 2 3 4
+   [CALC] Protocol: High Card v1 :: 15 (Code) x 1 (Amp) = 15 DMG
+   > Executing: Protocol: High Card | Base Dmg: 15
+   > Virus Threat Reduced! Remaining: 118
+
+[WARNING] DEFENSE FAILED! Virus attacks System!
+Integrity Damage Taken: -118
+System unstable. Remaining Integrity: $1882
+Emergency Shop Protocol Initiated...
+
+========================================
+   DARK WEB VENDOR (INTEGRITY: 1882)
+========================================
+WARNING: Spending Integrity reduces your current defense!
+
+--- DEFENSE SCRIPTS (Passive Buffs) ---
+ 1. INSTALL RAM Upgrade (+2 Hand Size, +50 Dmg) (Cost: 120 Integrity)
+ 2. INSTALL RAM Upgrade (+2 Hand Size, +50 Dmg) (Cost: 120 Integrity)
+
+--- HACKER PROTOCOLS (One-Time Use) ---
+ 3. EXECUTE Patch: Protocol: Full House (Cost: 5 Integrity)
+ 4. EXECUTE Patch: Protocol: High Card (Cost: 5 Integrity)
+
+----------------------------------------
+R. Refresh Stock (Cost: 20)
+E. Disconnect & Next Wave
+Choice >> 1
+
+[SUCCESS] Script Installed: RAM Upgrade (+2 Hand Size, +50 Dmg)
+
+========================================
+   DARK WEB VENDOR (INTEGRITY: 1762)
+========================================
+WARNING: Spending Integrity reduces your current defense!
+
+--- DEFENSE SCRIPTS (Passive Buffs) ---
+ 1. INSTALL RAM Upgrade (+2 Hand Size, +50 Dmg) (Cost: 120 Integrity)
+
+--- HACKER PROTOCOLS (One-Time Use) ---
+ 2. EXECUTE Patch: Protocol: Full House (Cost: 5 Integrity)
+ 3. EXECUTE Patch: Protocol: High Card (Cost: 5 Integrity)
+
+----------------------------------------
+R. Refresh Stock (Cost: 20)
+E. Disconnect & Next Wave
+Choice >> r
+
+[!] CONNECTING TO DARK WEB VENDOR...
+[!] NEW STOCK GENERATED.
+
+========================================
+   DARK WEB VENDOR (INTEGRITY: 1742)
+========================================
+WARNING: Spending Integrity reduces your current defense!
+
+--- DEFENSE SCRIPTS (Passive Buffs) ---
+ 1. INSTALL Overclock Daemon (x2.4 Dmg) (Cost: 400 Integrity)
+ 2. INSTALL Firewall Script (+300 Dmg) (Cost: 50 Integrity)
+
+--- HACKER PROTOCOLS (One-Time Use) ---
+ 3. EXECUTE Fragmenter.exe (Cost: 4 Integrity)
+ 4. EXECUTE Patch: Protocol: Straight (Cost: 5 Integrity)
+
+----------------------------------------
+R. Refresh Stock (Cost: 20)
+E. Disconnect & Next Wave
+Choice >> e
+
+[LOG] Disconnecting from Dark Web...
+
+----------------------------------------
+WAVE 2 | VIRUS THREAT: 900
+INTEGRITY ($): 1742 | Attacks: 4 | Rerolls: 3
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:8-H] [1:A-H] [2:9-S] [3:2-D] [4:10-H] [5:K-C] [6:Q-D] [7:5-C] [8:4-C] [9:J-S]
+
+Cmd (idx OR 'd' idx): d 0 1 2 3 4
+>> Flushing bad data (Discarding)...
+
+----------------------------------------
+WAVE 2 | VIRUS THREAT: 900
+INTEGRITY ($): 1742 | Attacks: 4 | Rerolls: 2
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:K-C] [1:Q-D] [2:5-C] [3:4-C] [4:J-S] [5:J-C] [6:5-S] [7:4-D] [8:Q-S] [9:6-S]
+
+Cmd (idx OR 'd' idx): d 1 6 7 8 9
+>> Flushing bad data (Discarding)...
+
+----------------------------------------
+WAVE 2 | VIRUS THREAT: 900
+INTEGRITY ($): 1742 | Attacks: 4 | Rerolls: 1
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:K-C] [1:5-C] [2:4-C] [3:J-S] [4:J-C] [5:A-D] [6:8-S] [7:7-H] [8:3-C] [9:4-H]
+
+Cmd (idx OR 'd' idx): 0 1 2 4 8
+   [CALC] Protocol: Flush v1 :: 67 (Code) x 4 (Amp) = 268 DMG
+   > Executing: Protocol: Flush | Base Dmg: 268 -> [Buff: 318]
+   > Virus Threat Reduced! Remaining: 582
+
+----------------------------------------
+WAVE 2 | VIRUS THREAT: 582
+INTEGRITY ($): 1742 | Attacks: 3 | Rerolls: 1
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:J-S] [1:A-D] [2:8-S] [3:7-H] [4:4-H] [5:Q-C] [6:7-D] [7:7-S] [8:J-H] [9:5-D]
+
+Cmd (idx OR 'd' idx): 3 6 7 0 8
+   [CALC] Protocol: Full House v1 :: 81 (Code) x 4 (Amp) = 324 DMG
+   > Executing: Protocol: Full House | Base Dmg: 324 -> [Buff: 374]
+   > Virus Threat Reduced! Remaining: 208
+
+----------------------------------------
+WAVE 2 | VIRUS THREAT: 208
+INTEGRITY ($): 1742 | Attacks: 2 | Rerolls: 1
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:A-D] [1:8-S] [2:4-H] [3:Q-C] [4:5-D] [5:J-D] [6:Q-H] [7:9-C] [8:A-C] [9:6-C]
+
+Cmd (idx OR 'd' idx): 0 0
+Invalid input.
+
+Cmd (idx OR 'd' idx): 0 1 2 3
+   [CALC] Protocol: High Card v1 :: 16 (Code) x 1 (Amp) = 16 DMG
+   > Executing: Protocol: High Card | Base Dmg: 16 -> [Buff: 66]
+   > Virus Threat Reduced! Remaining: 142
+
+----------------------------------------
+WAVE 2 | VIRUS THREAT: 142
+INTEGRITY ($): 1742 | Attacks: 1 | Rerolls: 1
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:5-D] [1:J-D] [2:Q-H] [3:9-C] [4:A-C] [5:6-C] [6:6-H] [7:K-D] [8:10-S] [9:5-H]
+
+Cmd (idx OR 'd' idx): 0 1 2 3 4  
+   [CALC] Protocol: High Card v1 :: 16 (Code) x 1 (Amp) = 16 DMG
+   > Executing: Protocol: High Card | Base Dmg: 16 -> [Buff: 66]
+   > Virus Threat Reduced! Remaining: 76
+
+[WARNING] DEFENSE FAILED! Virus attacks System!
+Integrity Damage Taken: -76
+System unstable. Remaining Integrity: $1666
+Emergency Shop Protocol Initiated...
+
+========================================
+   DARK WEB VENDOR (INTEGRITY: 1666)
+========================================
+WARNING: Spending Integrity reduces your current defense!
+
+--- DEFENSE SCRIPTS (Passive Buffs) ---
+ 1. INSTALL Overclock Daemon (x2.4 Dmg) (Cost: 400 Integrity)
+ 2. INSTALL Firewall Script (+300 Dmg) (Cost: 50 Integrity)
+
+--- HACKER PROTOCOLS (One-Time Use) ---
+ 3. EXECUTE Fragmenter.exe (Cost: 4 Integrity)
+ 4. EXECUTE Patch: Protocol: Straight (Cost: 5 Integrity)
+
+----------------------------------------
+R. Refresh Stock (Cost: 20)
+E. Disconnect & Next Wave
+Choice >> 3
+
+[>] RUNNING: FRAGMENTER.EXE...
+    >> Corrupting data sector: [CRP]2-S (Status: UNSTABLE/HIGH_AMP)
+    >> Corrupting data sector: [CRP]9-S (Status: UNSTABLE/HIGH_AMP)
+
+========================================
+   DARK WEB VENDOR (INTEGRITY: 1662)
+========================================
+WARNING: Spending Integrity reduces your current defense!
+
+--- DEFENSE SCRIPTS (Passive Buffs) ---
+ 1. INSTALL Overclock Daemon (x2.4 Dmg) (Cost: 400 Integrity)
+ 2. INSTALL Firewall Script (+300 Dmg) (Cost: 50 Integrity)
+
+--- HACKER PROTOCOLS (One-Time Use) ---
+ 3. EXECUTE Patch: Protocol: Straight (Cost: 5 Integrity)
+
+----------------------------------------
+R. Refresh Stock (Cost: 20)
+E. Disconnect & Next Wave
+Choice >> e
+
+[LOG] Disconnecting from Dark Web...
+
+----------------------------------------
+WAVE 3 | VIRUS THREAT: 1350
+INTEGRITY ($): 1662 | Attacks: 4 | Rerolls: 3
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:[CRP]2-S] [1:7-D] [2:2-D] [3:A-D] [4:K-D] [5:6-H] [6:A-H] [7:4-C] [8:10-C] [9:6-C]
+
+Cmd (idx OR 'd' idx): 0 2      
+   [CALC] Protocol: Pair v1 :: 14 (Code) x 2 (Amp) = 28 DMG   [AMP] CORRUPTED PROTOCOL: 28 x 2.0 = 56 DMG
+
+   > Executing: Protocol: Pair | Base Dmg: 56 -> [Buff: 106]
+   > Virus Threat Reduced! Remaining: 1244
+
+----------------------------------------
+WAVE 3 | VIRUS THREAT: 1244
+INTEGRITY ($): 1662 | Attacks: 3 | Rerolls: 3
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:7-D] [1:A-D] [2:K-D] [3:6-H] [4:A-H] [5:4-C] [6:10-C] [7:6-C] [8:K-H] [9:J-S]
+
+Cmd (idx OR 'd' idx): 0 4 5 6 7
+   [CALC] Protocol: High Card v1 :: 16 (Code) x 1 (Amp) = 16 DMG
+   > Executing: Protocol: High Card | Base Dmg: 16 -> [Buff: 66]
+   > Virus Threat Reduced! Remaining: 1178
+
+----------------------------------------
+WAVE 3 | VIRUS THREAT: 1178
+INTEGRITY ($): 1662 | Attacks: 2 | Rerolls: 3
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:A-D] [1:K-D] [2:6-H] [3:K-H] [4:J-S] [5:5-H] [6:6-S] [7:10-D] [8:3-C] [9:A-S]
+
+Cmd (idx OR 'd' idx): 0 1 2 3
+   [CALC] Protocol: Pair v1 :: 30 (Code) x 2 (Amp) = 60 DMG
+   > Executing: Protocol: Pair | Base Dmg: 60 -> [Buff: 110]
+   > Virus Threat Reduced! Remaining: 1068
+
+----------------------------------------
+WAVE 3 | VIRUS THREAT: 1068
+INTEGRITY ($): 1662 | Attacks: 1 | Rerolls: 3
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:J-S] [1:5-H] [2:6-S] [3:10-D] [4:3-C] [5:A-S] [6:9-D] [7:7-H] [8:[CRP]9-S] [9:K-C]
+
+Cmd (idx OR 'd' idx): 1 1
+Invalid input.
+
+Cmd (idx OR 'd' idx): 0 1 2 3 4
+   [CALC] Protocol: High Card v1 :: 15 (Code) x 1 (Amp) = 15 DMG
+   > Executing: Protocol: High Card | Base Dmg: 15 -> [Buff: 65]
+   > Virus Threat Reduced! Remaining: 1003
+
+[WARNING] DEFENSE FAILED! Virus attacks System!
+Integrity Damage Taken: -1003
+System unstable. Remaining Integrity: $659
+Emergency Shop Protocol Initiated...
+
+========================================
+   DARK WEB VENDOR (INTEGRITY: 659)
+========================================
+WARNING: Spending Integrity reduces your current defense!
+
+--- DEFENSE SCRIPTS (Passive Buffs) ---
+ 1. INSTALL Overclock Daemon (x2.4 Dmg) (Cost: 400 Integrity)
+ 2. INSTALL Firewall Script (+300 Dmg) (Cost: 50 Integrity)
+
+--- HACKER PROTOCOLS (One-Time Use) ---
+ 3. EXECUTE Patch: Protocol: Straight (Cost: 5 Integrity)
+
+----------------------------------------
+R. Refresh Stock (Cost: 20)
+E. Disconnect & Next Wave
+Choice >> e
+
+[LOG] Disconnecting from Dark Web...
+
+----------------------------------------
+WAVE 4 | VIRUS THREAT: 1800
+INTEGRITY ($): 659 | Attacks: 4 | Rerolls: 3
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:4-S] [1:9-D] [2:8-C] [3:6-C] [4:4-D] [5:3-D] [6:7-D] [7:[CRP]2-S] [8:7-H] [9:K-S]
+
+Cmd (idx OR 'd' idx): 3 4 5 6
+   [CALC] Protocol: High Card v1 :: 12 (Code) x 1 (Amp) = 12 DMG
+   > Executing: Protocol: High Card | Base Dmg: 12 -> [Buff: 62]
+   > Virus Threat Reduced! Remaining: 1738
+
+----------------------------------------
+WAVE 4 | VIRUS THREAT: 1738
+INTEGRITY ($): 659 | Attacks: 3 | Rerolls: 3
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:4-S] [1:9-D] [2:8-C] [3:[CRP]2-S] [4:7-H] [5:K-S] [6:2-C] [7:7-C] [8:6-S] [9:J-S]
+
+Cmd (idx OR 'd' idx): 3 4 5  
+   [CALC] Protocol: High Card v1 :: 15 (Code) x 1 (Amp) = 15 DMG
+   > Executing: Protocol: High Card | Base Dmg: 15 -> [Buff: 65]
+   > Virus Threat Reduced! Remaining: 1673
+
+----------------------------------------
+WAVE 4 | VIRUS THREAT: 1673
+INTEGRITY ($): 659 | Attacks: 2 | Rerolls: 3
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:4-S] [1:9-D] [2:8-C] [3:2-C] [4:7-C] [5:6-S] [6:J-S] [7:A-C] [8:J-C] [9:3-C]
+
+Cmd (idx OR 'd' idx): 0 1 2 3 4
+   [CALC] Protocol: High Card v1 :: 14 (Code) x 1 (Amp) = 14 DMG
+   > Executing: Protocol: High Card | Base Dmg: 14 -> [Buff: 64]
+   > Virus Threat Reduced! Remaining: 1609
+
+----------------------------------------
+WAVE 4 | VIRUS THREAT: 1609
+INTEGRITY ($): 659 | Attacks: 1 | Rerolls: 3
+Active Scripts: [RAM Upgrade (+2 Hand Size, +50 Dmg)]
+----------------------------------------
+DATA BUFFER (HAND):
+[0:6-S] [1:J-S] [2:A-C] [3:J-C] [4:3-C] [5:8-D] [6:K-D] [7:10-S] [8:K-C] [9:Q-D]
+
+Cmd (idx OR 'd' idx): 0 1 2 3 4
+   [CALC] Protocol: Pair v1 :: 30 (Code) x 2 (Amp) = 60 DMG
+   > Executing: Protocol: Pair | Base Dmg: 60 -> [Buff: 110]
+   > Virus Threat Reduced! Remaining: 1499
+
+[WARNING] DEFENSE FAILED! Virus attacks System!
+Integrity Damage Taken: -1499
+Integrity Critical... SYSTEM SHUTDOWN.
