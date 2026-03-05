@@ -46,7 +46,7 @@ void RunSession::StartGame() {
     // Buka toko awal untuk persiapan
     shopSystem->GenerateStock();
     
-    while (currentAnte <= MAX_ANTES && money > 0) {
+    while (currentAnte <= MAX_WAVES && money > 0) {
         PlayBlind(); 
         currentAnte++;
     }
